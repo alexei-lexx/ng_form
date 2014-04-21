@@ -3,6 +3,7 @@ require 'spec_helper'
 describe 'NgForm::Builder' do
   before do
     @builder = NgForm::Builder.new(:user)
+    I18n.reload!
   end
 
   it 'creates text field with label by default' do
@@ -33,6 +34,37 @@ describe 'NgForm::Builder' do
     end
   end
 
-  it 'creates text field with email type'
-  it 'creates text field with placeholder'
+  it 'takes label text from locale' do
+    I18n.backend.store_translations :en, { 'ng_form' => { labels: { user: { email: 'Great e-mail' } } } }
+    out = @builder.input(:email)
+
+    expect(out).to have_tag(:div) do
+      with_tag :label, text: 'Great e-mail'
+    end
+  end
+
+  it 'creates text field with email type' do
+    out = @builder.input(:email, as: :email)
+
+    expect(out).to have_tag(:div) do
+      with_tag :input, with: { type: 'email' }
+    end
+  end
+
+  it 'creates text field with placeholder' do
+    out = @builder.input(:email, input_html: { placeholder: 'Enter e-mail' })
+
+    expect(out).to have_tag(:div) do
+      with_tag :input, with: { placeholder: 'Enter e-mail' }
+    end
+  end
+  
+  it 'takes placeholder text from locale' do
+    I18n.backend.store_translations :en, { 'ng_form' => { placeholders: { user: { email: 'Enter e-mail' } } } }
+    out = @builder.input(:email)
+
+    expect(out).to have_tag(:div) do
+      with_tag :input, with: { placeholder: 'Enter e-mail' }
+    end
+  end
 end
