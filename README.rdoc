@@ -1,3 +1,5 @@
+{<img src="https://travis-ci.org/alexei-lexx/ng_form.svg?branch=master" alt="Build Status" />}[https://travis-ci.org/alexei-lexx/ng_form]
+
 = NgForm
 
 This project rocks and uses MIT-LICENSE.
