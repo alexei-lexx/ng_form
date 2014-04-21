@@ -17,6 +17,9 @@ describe 'NgForm::Builder' do
         with_text 'Jerry'
         with_tag :input, with: { type: 'radio', class: 'radio_buttons', name: 'user[name]', 'ng-model' => 'user.name', value: 'Jerry' }
       end
+      with_tag :span, with: { class: %w(help-block has-error), 'ng-show' => 'user.errors.name' } do
+        with_text '{{user.errors.name[0]}}'
+      end
     end
   end
 end

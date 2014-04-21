@@ -18,6 +18,9 @@ describe 'NgForm::Builder' do
         with_tag :option, text: 'Tom', with: { value: 'Tom' }
         with_tag :option, text: 'Jerry', with: { value: 'Jerry' }
       end
+      with_tag :span, with: { class: %w(help-block has-error), 'ng-show' => 'user.errors.role' } do
+        with_text '{{user.errors.role[0]}}'
+      end
     end
   end
 
