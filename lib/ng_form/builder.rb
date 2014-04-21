@@ -142,7 +142,7 @@ module NgForm
       end
 
       if text
-        content_tag(:label, text, for: build_id(attribute, options))
+        content_tag(:label, text, class: 'control-label', for: build_id(attribute, options))
       else
         ''.html_safe
       end
