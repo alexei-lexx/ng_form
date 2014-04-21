@@ -46,7 +46,7 @@ describe 'NgForm::Builder' do
   end
 
   it 'creates select with placeholder' do
-    out = @builder.select :role, [ 'Tom', 'Jerry' ], select_html: { placeholder: 'Choose a role' }
+    out = @builder.select :role, [ 'Tom', 'Jerry' ], input_html: { placeholder: 'Choose a role' }
 
     expect(out).to have_tag(:div) do
       with_tag :select, with: { placeholder: 'Choose a role' }

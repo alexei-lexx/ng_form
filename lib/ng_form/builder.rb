@@ -9,17 +9,6 @@ module NgForm
       self.model_name = model_name
     end
 
-    def input(attribute, options = {})
-      case options[:as]
-      when :text
-        build_text_area(attribute, options)
-      when :radio_buttons
-        build_radio_buttons(attribute, options)
-      else
-        build_text_field(attribute, options)
-      end
-    end
-
     def string(attribute, options = {})
       build_text_field(attribute, 'text', options)
     end
@@ -39,10 +28,9 @@ module NgForm
         rescue I18n::MissingTranslationData
           # ignore
         end
-        
       end
 
-      content_tag :div, class: 'form-group', 'ng-class' => "{ \"has-error\": #{error_attr(attribute)} }" do
+      build_wrapper attribute do
         build_label(attribute, options) + content_tag(:textarea, nil, input_options) +
         content_tag(:span, class: 'help-block has-error', 'ng-show' => error_attr(attribute)) do
           "{{#{error_value(attribute)}}}"
@@ -58,7 +46,7 @@ module NgForm
       input_options[:name] = "#{model_name}[#{attribute}]"
       input_options['ng-model'] = model_attr(attribute)
 
-      content_tag :div, class: 'form-group radio_buttons', 'ng-class' => "{ \"has-error\": #{error_attr(attribute)} }" do
+      build_wrapper attribute, 'radio_buttons' do
         content = ''.html_safe
         collection.each do |item|
           content += content_tag :label, class: 'radio radio-inline' do
@@ -70,21 +58,21 @@ module NgForm
     end
 
     def select(attribute, collection, options = {})
-      select_html = (options[:select_html] && options[:select_html].dup) || {}
-      select_html[:id] = build_id(attribute, options)
-      select_html[:class] ||= 'select form-control'
-      select_html['ng-model'] = model_attr(attribute)
-      unless select_html.has_key?(:placeholder)
+      input_html = (options[:input_html] && options[:input_html].dup) || {}
+      input_html[:id] = build_id(attribute, options)
+      input_html[:class] ||= 'select form-control'
+      input_html['ng-model'] = model_attr(attribute)
+      unless input_html.has_key?(:placeholder)
         begin
-          select_html[:placeholder] = I18n.t("ng_form.placeholders.#{model_attr(attribute)}", raise: true)
+          input_html[:placeholder] = I18n.t("ng_form.placeholders.#{model_attr(attribute)}", raise: true)
         rescue I18n::MissingTranslationData
           # ignore
         end
       end
 
-      content_tag :div, class: 'form-group select', 'ng-class' => "{ \"has-error\": #{error_attr(attribute)} }" do
+      build_wrapper attribute, 'select' do
         build_label(attribute, options) +
-        content_tag(:select, select_html) do
+        content_tag(:select, input_html) do
           content = content_tag(:option, '')
 
           collection.each do |item|
@@ -121,11 +109,17 @@ module NgForm
         end
       end
 
-      content_tag :div, class: 'form-group', 'ng-class' => "{ \"has-error\": #{error_attr(attribute)} }" do
+      build_wrapper attribute do
         build_label(attribute, options) + tag(:input, input_options) +
         content_tag(:span, class: 'help-block has-error', 'ng-show' => error_attr(attribute)) do
           "{{#{error_value(attribute)}}}"
         end
+      end
+    end
+
+    def build_wrapper(attribute, wrapper_class = nil)
+      content_tag :div, class: "form-group #{wrapper_class}", 'ng-class' => "{ \"has-error\": #{error_attr(attribute)} }" do
+        yield
       end
     end
 
