@@ -13,16 +13,23 @@ module NgForm
       case options[:as]
       when :text
         build_text_area(attribute, options)
+      when :radio_buttons
+        build_radio_buttons(attribute, options)
       else
         build_text_field(attribute, options)
       end
     end
 
-    private
+    def string(attribute, options = {})
+      build_text_field(attribute, 'text', options)
+    end
 
-    def build_text_field(attribute, options)
+    def email(attribute, options = {})
+      build_text_field(attribute, 'email', options)
+    end
+
+    def text(attribute, options = {})
       input_options = (options[:input_html] && options[:input_html].dup) || {}
-      input_options[:type] = options[:as].presence || 'text'
       input_options[:id] = build_id(attribute, options)
       input_options['ng-model'] = model_attr(attribute)
       input_options[:class] ||= 'form-control text'
@@ -36,18 +43,74 @@ module NgForm
       end
 
       content_tag :div, class: 'form-group', 'ng-class' => "{ \"has-error\": #{error_attr(attribute)} }" do
-        build_label(attribute, options) + tag(:input, input_options) +
+        build_label(attribute, options) + content_tag(:textarea, nil, input_options) +
         content_tag(:span, class: 'help-block has-error', 'ng-show' => error_attr(attribute)) do
           "{{#{error_value(attribute)}}}"
         end
       end
     end
 
-    def build_text_area(attribute, options)
-      input_id = "#{model_name}_#{attribute}"
-
+    def radio_buttons(attribute, collection, options = {})
       input_options = (options[:input_html] && options[:input_html].dup) || {}
-      input_options[:id] ||= input_id
+      input_options[:id] = build_id(attribute, options)
+      input_options[:type] = 'radio'
+      input_options[:class] ||= 'radio_buttons'
+      input_options[:name] = "#{model_name}[#{attribute}]"
+      input_options['ng-model'] = model_attr(attribute)
+
+      content_tag :div, class: 'form-group radio_buttons', 'ng-class' => "{ \"has-error\": #{error_attr(attribute)} }" do
+        content = ''.html_safe
+        collection.each do |item|
+          content += content_tag :label, class: 'radio radio-inline' do
+            tag(:input, input_options.merge({ value: item })) + item.html_safe
+          end
+        end
+        content
+      end
+    end
+
+    def select(attribute, collection, options = {})
+      select_html = (options[:select_html] && options[:select_html].dup) || {}
+      select_html[:id] = build_id(attribute, options)
+      select_html[:class] ||= 'select form-control'
+      select_html['ng-model'] = model_attr(attribute)
+      unless select_html.has_key?(:placeholder)
+        begin
+          select_html[:placeholder] = I18n.t("ng_form.placeholders.#{model_attr(attribute)}", raise: true)
+        rescue I18n::MissingTranslationData
+          # ignore
+        end
+      end
+
+      content_tag :div, class: 'form-group select', 'ng-class' => "{ \"has-error\": #{error_attr(attribute)} }" do
+        build_label(attribute, options) +
+        content_tag(:select, select_html) do
+          content = content_tag(:option, '')
+
+          collection.each do |item|
+            value = item.respond_to?(:id) ? item.id : item
+            if options[:label_method]
+              if options[:label_method].is_a?(Symbol)
+                label = item.send options[:label_method]
+              else
+                label = options[:label_method].call(item)
+              end
+            else
+              label = item
+            end
+            content += content_tag(:option, label, value: value)
+          end
+          content
+        end
+      end
+    end
+
+    private
+
+    def build_text_field(attribute, type, options)
+      input_options = (options[:input_html] && options[:input_html].dup) || {}
+      input_options[:type] = type
+      input_options[:id] = build_id(attribute, options)
       input_options['ng-model'] = model_attr(attribute)
       input_options[:class] ||= 'form-control text'
       unless input_options.has_key?(:placeholder)
@@ -56,11 +119,10 @@ module NgForm
         rescue I18n::MissingTranslationData
           # ignore
         end
-        
       end
 
       content_tag :div, class: 'form-group', 'ng-class' => "{ \"has-error\": #{error_attr(attribute)} }" do
-        build_label(attribute, options) + content_tag(:textarea, nil, input_options) +
+        build_label(attribute, options) + tag(:input, input_options) +
         content_tag(:span, class: 'help-block has-error', 'ng-show' => error_attr(attribute)) do
           "{{#{error_value(attribute)}}}"
         end

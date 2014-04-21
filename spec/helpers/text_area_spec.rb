@@ -6,7 +6,7 @@ describe 'NgForm::Builder' do
   end
 
   it 'creates text area with label by default' do
-    out = @builder.input(:email, as: :text)
+    out = @builder.text(:email)
 
     expect(out).to have_tag(:div, with: { class: 'form-group', 'ng-class' => '{ "has-error": user.errors.email }' }) do
       with_tag :label, text: 'User Email', with: { for: 'user_email' }
