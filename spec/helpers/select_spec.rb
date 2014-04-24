@@ -10,11 +10,11 @@ describe 'NgForm::Builder' do
 
   it 'creates select' do
     out = @builder.select(:role, [ 'Tom', 'Jerry' ])
+    p out
 
     expect(out).to have_tag(:div, with: { class: %w(form-group select), 'ng-class' => '{ "has-error": user.errors.role }' }) do
       with_tag :label, text: 'User Role', with: { for: 'user_role' }
       with_tag :select, with: { class: %w(select form-control), 'ng-model' => 'user.role' } do
-        with_tag :option, text: ''
         with_tag :option, text: 'Tom', with: { value: 'Tom' }
         with_tag :option, text: 'Jerry', with: { value: 'Jerry' }
       end
@@ -62,6 +62,26 @@ describe 'NgForm::Builder' do
 
     expect(out).to have_tag(:div) do
       with_tag :select, with: { placeholder: 'Choose a role' }
+    end
+  end
+
+  it 'has no blank option by default' do
+    out = @builder.select :role, [ 'Tom', 'Jerry' ]
+
+    expect(out).to have_tag(:div) do
+      with_tag :select do
+        without_tag :option, text: ''
+      end
+    end
+  end
+
+  it 'has blank option if enabled' do
+    out = @builder.select :role, [ 'Tom', 'Jerry' ], blank: true
+
+    expect(out).to have_tag(:div) do
+      with_tag :select do
+        with_tag :option, text: ''
+      end
     end
   end
 end

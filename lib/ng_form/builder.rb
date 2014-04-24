@@ -50,7 +50,11 @@ module NgForm
       build_wrapper attribute, 'select' do
         build_label(attribute, options) +
         content_tag(:select, input_html) do
-          content = content_tag(:option, '')
+          if options[:blank]
+            content = content_tag(:option, '')
+          else
+            content = ''.html_safe
+          end
 
           collection.each do |item|
             value = item.respond_to?(:id) ? item.id : item
