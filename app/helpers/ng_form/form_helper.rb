@@ -1,7 +1,7 @@
 module NgForm
   module FormHelper
     def ng_form_for(model_name, options = {})
-      builder = NgForm::Builder.new(model_name)
+      builder = NgForm::Builder.new(model_name, options)
 
       form_options = (options[:html] && options[:html].dup) || {}
       form_options[:novalidate] = :novalidate

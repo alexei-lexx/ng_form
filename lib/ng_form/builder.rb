@@ -4,9 +4,11 @@ module NgForm
     include ActionView::Context
 
     attr_accessor :model_name
+    attr_accessor :options
 
-    def initialize(model_name)
+    def initialize(model_name, options = {})
       self.model_name = model_name
+      self.options = options
     end
 
     def string(attribute, options = {})
@@ -122,7 +124,7 @@ module NgForm
       end
       if use_placeholder && !input_html.has_key?(:placeholder)
         begin
-          input_html[:placeholder] = I18n.t("ng_form.placeholders.#{model_attr(attribute)}", raise: true)
+          input_html[:placeholder] = t(attribute, 'placeholders')
         rescue I18n::MissingTranslationData
           # ignore
         end
@@ -135,7 +137,7 @@ module NgForm
         text = options[:label]
       else
         begin
-          text = I18n.t("ng_form.labels.#{model_attr(attribute)}", raise: true)
+          text = t(attribute, 'labels')
         rescue I18n::MissingTranslationData
           text = model_name.to_s.camelize + ' ' + attribute.to_s.camelize
         end
@@ -152,6 +154,11 @@ module NgForm
       content_tag(:span, class: 'help-block has-error', 'ng-show' => error_attr(attribute)) do
         "{{#{error_value(attribute)}}}"
       end
+    end
+
+    def t(attribute, what)
+      canonic_model_name = options[:canonic_model_name] || model_name
+      I18n.t("ng_form.#{what}.#{canonic_model_name}.#{attribute}", raise: true)
     end
   end
 end
