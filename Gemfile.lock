@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    ng_form (0.0.5)
+    ng_form (0.0.6)
       rails (~> 4.0.3)
 
 GEM
