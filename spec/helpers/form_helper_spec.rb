@@ -41,4 +41,20 @@ describe NgForm::FormHelper do
       end
     end
   end
+
+  it 'uses canonic model name to generate input[name]' do
+    out = helper.ng_form_for(:member, canonic_model_name: 'user') do |f|
+      f.string :email
+    end
+
+    expect(out).to have_tag('input', with: { name: 'user[email]' })
+  end
+
+  it 'uses canonic model name to generate input[id]' do
+    out = helper.ng_form_for(:member, canonic_model_name: 'user') do |f|
+      f.string :email
+    end
+
+    expect(out).to have_tag('input', with: { id: 'user_email' })
+  end
 end

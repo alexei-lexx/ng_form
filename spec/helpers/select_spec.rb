@@ -10,7 +10,6 @@ describe 'NgForm::Builder' do
 
   it 'creates select' do
     out = @builder.select(:role, [ 'Tom', 'Jerry' ])
-    p out
 
     expect(out).to have_tag(:div, with: { class: %w(form-group select), 'ng-class' => '{ "has-error": user.errors.role }' }) do
       with_tag :label, text: 'User Role', with: { for: 'user_role' }

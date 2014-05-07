@@ -104,7 +104,7 @@ module NgForm
       if options[:input_html] && options[:input_html].has_key?(:id)
         options[:input_html][:id]
       else
-        "#{model_name}_#{attribute}"
+        "#{canonic_model_name}_#{attribute}"
       end
     end
 
@@ -124,7 +124,7 @@ module NgForm
         input_html[:class] = input_class
       end
       unless  input_html.has_key?(:name)
-        input_html[:name] = "#{model_name}[#{attribute}]"
+        input_html[:name] = "#{canonic_model_name}[#{attribute}]"
       end
       if use_placeholder && !input_html.has_key?(:placeholder)
         begin
@@ -161,8 +161,11 @@ module NgForm
     end
 
     def t(attribute, what)
-      canonic_model_name = options[:canonic_model_name] || model_name
       I18n.t("ng_form.#{what}.#{canonic_model_name}.#{attribute}", raise: true)
+    end
+
+    def canonic_model_name
+      options[:canonic_model_name] || model_name
     end
   end
 end
