@@ -83,4 +83,14 @@ describe 'NgForm::Builder' do
       end
     end
   end
+
+  it 'uses first and last items of option if its an array' do
+    out = @builder.select :role, [ [ 't', 'Tom' ], [ 'j', 'Jerry' ] ], blank: true
+    expect(out).to have_tag(:div) do
+      with_tag :select do
+        with_tag :option, text: 'Tom', with: { value: 't' }
+        with_tag :option, text: 'Jerry', with: { value: 'j' }
+      end
+    end
+  end
 end

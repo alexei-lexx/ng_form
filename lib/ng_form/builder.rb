@@ -57,16 +57,22 @@ module NgForm
           end
 
           collection.each do |item|
-            value = item.respond_to?(:id) ? item.id : item
-            if options[:label_method]
-              if options[:label_method].is_a?(Symbol)
-                label = item.send options[:label_method]
-              else
-                label = options[:label_method].call(item)
-              end
+            if item.is_a? Array
+              value = item.first
+              label = item.last
             else
-              label = item
+              value = item.respond_to?(:id) ? item.id : item
+              if options[:label_method]
+                if options[:label_method].is_a?(Symbol)
+                  label = item.send options[:label_method]
+                else
+                  label = options[:label_method].call(item)
+                end
+              else
+                label = item
+              end
             end
+            
             content += content_tag(:option, label, value: value)
           end
           content
