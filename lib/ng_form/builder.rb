@@ -25,6 +25,7 @@ module NgForm
       build_wrapper attribute do
         build_label(attribute, options) +
         content_tag(:textarea, nil, input_html) +
+        build_help(attribute, options) +
         build_error(attribute, options)
       end
     end
@@ -40,7 +41,7 @@ module NgForm
             tag(:input, input_html.merge({ value: item })) + item.html_safe
           end
         end
-        content + build_error(attribute, options)
+        content + build_help(attribute, options) + build_error(attribute, options)
       end
     end
 
@@ -77,6 +78,7 @@ module NgForm
           end
           content
         end +
+        build_help(attribute, options) +
         build_error(attribute, options)
       end
     end
@@ -90,6 +92,7 @@ module NgForm
       build_wrapper attribute do
         build_label(attribute, options) +
         tag(:input, input_html) +
+        build_help(attribute, options) +
         build_error(attribute, options)
       end
     end
@@ -163,6 +166,26 @@ module NgForm
     def build_error(attribute, options)
       content_tag(:span, class: 'help-block has-error', 'ng-show' => error_attr(attribute)) do
         "{{#{error_value(attribute)}}}"
+      end
+    end
+
+    def build_help(attribute, options)
+      text = nil
+      if options.has_key?(:help)
+        text = options[:help]
+      else
+        begin
+          text = t(attribute, 'help')
+        rescue I18n::MissingTranslationData
+          # nothing
+        end
+      end
+      if text
+        content_tag :span, class: 'help-block' do
+          text
+        end
+      else
+        ''.html_safe
       end
     end
 
