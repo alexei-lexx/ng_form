@@ -83,6 +83,16 @@ module NgForm
       end
     end
 
+    def fields_for(model_name, options = {})
+      merged_options = self.options.dup.merge(options)
+      builder = NgForm::Builder.new(model_name, merged_options)
+      if block_given?
+        yield(builder)
+      else
+        builder
+      end
+    end
+
     private
 
     def build_text_field(attribute, type, options)
