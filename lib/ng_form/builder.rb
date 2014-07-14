@@ -174,6 +174,7 @@ module NgForm
     end
 
     def build_error(attribute, options)
+      return ''.html_safe if options[:error] == false
       content_tag(:span, class: 'help-block has-error', 'ng-show' => error_attr(attribute)) do
         "{{#{error_value(attribute)}}}"
       end

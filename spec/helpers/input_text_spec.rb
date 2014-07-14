@@ -67,4 +67,12 @@ describe 'NgForm::Builder' do
       with_tag :input, with: { placeholder: 'Enter e-mail' }
     end
   end
+
+  it 'creates text field without error text' do
+    out = @builder.string(:email, error: false)
+
+    expect(out).to have_tag(:div, with: { class: 'form-group', 'ng-class' => '{ "has-error": user.errors.email }' }) do
+      without_tag :span, with: { class: %w(help-block has-error), 'ng-show' => 'user.errors.email' }
+    end
+  end
 end
