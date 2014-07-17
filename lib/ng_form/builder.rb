@@ -19,6 +19,10 @@ module NgForm
       build_text_field(attribute, 'email', options)
     end
 
+    def date(attribute, options = {})
+      build_text_field(attribute, 'date', options)
+    end
+
     def text(attribute, options = {})
       input_html = build_input_html(attribute, options, 'form-control text', true)
 
