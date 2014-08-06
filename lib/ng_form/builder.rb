@@ -49,6 +49,18 @@ module NgForm
       end
     end
 
+    def checkbox(attribute, options = {})
+      build_wrapper attribute, 'checkbox' do
+        content = content_tag :label do
+          input_html = build_input_html(attribute, options, nil, false)
+          input_html[:type] = 'checkbox'
+          tag(:input, input_html) +
+          (get_label_text(attribute, options) || '').html_safe
+        end
+        content + build_help(attribute, options) + build_error(attribute, options)
+      end
+    end
+
     def select(attribute, collection, options = {})
       input_html = build_input_html(attribute, options, 'select form-control', true)
 
@@ -159,17 +171,20 @@ module NgForm
       input_html
     end
 
-    def build_label(attribute, options)
+    def get_label_text(attribute, options)
       if options.has_key?(:label)
-        text = options[:label]
+        options[:label]
       else
         begin
-          text = t(attribute, 'labels')
+          t(attribute, 'labels')
         rescue I18n::MissingTranslationData
-          text = model_name.to_s.camelize + ' ' + attribute.to_s.camelize
+          model_name.to_s.camelize + ' ' + attribute.to_s.camelize
         end
       end
+    end
 
+    def build_label(attribute, options)
+      text = get_label_text(attribute, options)
       if text
         content_tag(:label, text, class: 'control-label', for: build_id(attribute, options))
       else
