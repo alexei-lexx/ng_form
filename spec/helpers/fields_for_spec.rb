@@ -1,13 +1,11 @@
 require 'spec_helper'
 
 describe 'NgForm::Builder' do
-  before do
-    @builder = NgForm::Builder.new(:user)
-    I18n.reload!
-  end
+  let(:builder) { NgForm::Builder.new(:user) }
+  before { I18n.reload! }
 
   it 'creates text field for nested object' do
-    out = @builder.fields_for(:address).string :street
+    out = builder.fields_for(:address).string :street
 
     expect(out).to have_tag(:div, with: { class: 'form-group', 'ng-class' => '{ "has-error": address.errors.street }' }) do
       with_tag :label, text: 'Address Street', with: { for: 'address_street' }

@@ -3,13 +3,11 @@ require 'spec_helper'
 Fruit = Struct.new(:id, :name)
 
 describe 'NgForm::Builder' do
-  before do
-    @builder = NgForm::Builder.new(:user)
-    I18n.reload!
-  end
+  let(:builder) { NgForm::Builder.new(:user) }
+  before { I18n.reload! }
 
   it 'creates select' do
-    out = @builder.select(:role, [ 'Tom', 'Jerry' ])
+    out = builder.select(:role, [ 'Tom', 'Jerry' ])
 
     expect(out).to have_tag(:div, with: { class: %w(form-group select), 'ng-class' => '{ "has-error": user.errors.role }' }) do
       with_tag :label, text: 'User Role', with: { for: 'user_role' }
@@ -25,7 +23,7 @@ describe 'NgForm::Builder' do
 
   it 'creates select from object collection' do
     fruits = [ Fruit.new(1, 'apple'), Fruit.new(2, 'orange') ]
-    out = @builder.select :fruit, fruits, label_method: :name
+    out = builder.select :fruit, fruits, label_method: :name
 
     expect(out).to have_tag(:div) do
       with_tag :select do
@@ -37,7 +35,7 @@ describe 'NgForm::Builder' do
 
   it 'creates select where label method is lambda' do
     fruits = [ Fruit.new(1, 'apple'), Fruit.new(2, 'orange') ]
-    out = @builder.select :fruit, fruits, label_method: -> (fruit) { fruit.name.upcase }
+    out = builder.select :fruit, fruits, label_method: -> (fruit) { fruit.name.upcase }
 
     expect(out).to have_tag(:div) do
       with_tag :select do
@@ -48,7 +46,7 @@ describe 'NgForm::Builder' do
   end
 
   it 'creates select with placeholder' do
-    out = @builder.select :role, [ 'Tom', 'Jerry' ], input_html: { placeholder: 'Choose a role' }
+    out = builder.select :role, [ 'Tom', 'Jerry' ], input_html: { placeholder: 'Choose a role' }
 
     expect(out).to have_tag(:div) do
       with_tag :select, with: { placeholder: 'Choose a role' }
@@ -57,7 +55,7 @@ describe 'NgForm::Builder' do
 
   it 'takes placeholder text from locale' do
     I18n.backend.store_translations :en, { 'ng_form' => { placeholders: { user: { role: 'Choose a role' } } } }
-    out = @builder.select :role, [ 'Tom', 'Jerry' ]
+    out = builder.select :role, [ 'Tom', 'Jerry' ]
 
     expect(out).to have_tag(:div) do
       with_tag :select, with: { placeholder: 'Choose a role' }
@@ -65,7 +63,7 @@ describe 'NgForm::Builder' do
   end
 
   it 'has no blank option by default' do
-    out = @builder.select :role, [ 'Tom', 'Jerry' ]
+    out = builder.select :role, [ 'Tom', 'Jerry' ]
 
     expect(out).to have_tag(:div) do
       with_tag :select do
@@ -75,7 +73,7 @@ describe 'NgForm::Builder' do
   end
 
   it 'has blank option if enabled' do
-    out = @builder.select :role, [ 'Tom', 'Jerry' ], blank: true
+    out = builder.select :role, [ 'Tom', 'Jerry' ], blank: true
 
     expect(out).to have_tag(:div) do
       with_tag :select do
@@ -85,7 +83,7 @@ describe 'NgForm::Builder' do
   end
 
   it 'uses first and last items of option if its an array' do
-    out = @builder.select :role, [ [ 't', 'Tom' ], [ 'j', 'Jerry' ] ], blank: true
+    out = builder.select :role, [ [ 't', 'Tom' ], [ 'j', 'Jerry' ] ], blank: true
     expect(out).to have_tag(:div) do
       with_tag :select do
         with_tag :option, text: 'Tom', with: { value: 't' }
