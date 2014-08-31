@@ -124,10 +124,12 @@ module NgForm
     end
 
     def model_attr(attribute)
+      attribute = attribute.to_s.camelize(:lower) if options[:camelize]
       "#{model_name}.#{attribute}"
     end
 
     def error_attr(attribute)
+      attribute = attribute.to_s.camelize(:lower) if options[:camelize]
       "#{model_name}.errors.#{attribute}"
     end
 
@@ -178,7 +180,7 @@ module NgForm
         begin
           t(attribute, 'labels')
         rescue I18n::MissingTranslationData
-          model_name.to_s.camelize + ' ' + attribute.to_s.camelize
+          model_name.to_s.camelize + ' ' + attribute.to_s.titleize
         end
       end
     end
