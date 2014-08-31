@@ -1,12 +1,10 @@
 require 'spec_helper'
 
 describe 'NgForm::Builder' do
-  before do
-    @builder = NgForm::Builder.new(:user)
-  end
+  let(:builder) { NgForm::Builder.new(:user) }
 
   it 'creates radio buttons' do
-    out = @builder.radio_buttons(:name, [ 'Tom', 'Jerry' ])
+    out = builder.radio_buttons(:name, [ 'Tom', 'Jerry' ])
 
     expect(out).to have_tag(:div, with: { class: %w(form-group radio_buttons), 'ng-class' => '{ "has-error": user.errors.name }' }) do
       with_tag :label, with: { class: %w(radio radio-inline) } do
