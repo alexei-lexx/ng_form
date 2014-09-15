@@ -4,7 +4,6 @@ Fruit = Struct.new(:id, :name)
 
 describe 'NgForm::Builder' do
   let(:builder) { NgForm::Builder.new(:user) }
-  before { I18n.reload! }
 
   it 'creates select' do
     out = builder.select(:role, [ 'Tom', 'Jerry' ])

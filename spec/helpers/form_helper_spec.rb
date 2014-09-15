@@ -28,33 +28,4 @@ describe NgForm::FormHelper do
     out = helper.ng_form_for(:user, submit: 'update(user)')
     expect(out).to have_tag('form', with: { 'ng-submit' => 'update(user)' })
   end
-
-  it 'uses canonic model name to get translation' do
-    I18n.backend.store_translations :en, { 'ng_form' => { labels: { user: { email: 'Great e-mail' } } } }
-    out = helper.ng_form_for(:member, canonic_model_name: 'user') do |f|
-      f.string :email
-    end
-
-    expect(out).to have_tag('form') do
-      with_tag 'div' do
-        with_tag 'label', text: 'Great e-mail'
-      end
-    end
-  end
-
-  it 'uses canonic model name to generate input[name]' do
-    out = helper.ng_form_for(:member, canonic_model_name: 'user') do |f|
-      f.string :email
-    end
-
-    expect(out).to have_tag('input', with: { name: 'user[email]' })
-  end
-
-  it 'uses canonic model name to generate input[id]' do
-    out = helper.ng_form_for(:member, canonic_model_name: 'user') do |f|
-      f.string :email
-    end
-
-    expect(out).to have_tag('input', with: { id: 'user_email' })
-  end
 end

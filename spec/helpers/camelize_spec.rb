@@ -1,10 +1,10 @@
 require 'spec_helper'
 
 describe 'NgForm::Builder' do
-  context 'with camelize is enabled' do
+  context 'with enabled camelize option' do
     let(:builder) { NgForm::Builder.new(:user, camelize: true) }
 
-    it 'camelize attributes if enabled' do
+    it 'camelizes attributes' do
       out = builder.string(:first_name)
 
       expect(out).to have_tag(:div, with: { class: 'form-group', 'ng-class' => '{ "has-error": user.errors.firstName }' }) do

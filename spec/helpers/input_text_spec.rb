@@ -2,9 +2,8 @@ require 'spec_helper'
 
 describe 'NgForm::Builder' do
   let(:builder) { NgForm::Builder.new(:user) }
-  before { I18n.reload! }
 
-  it 'creates text field with label by default' do
+  it 'creates text field' do
     out = builder.string(:email)
 
     expect(out).to have_tag(:div, with: { class: 'form-group', 'ng-class' => '{ "has-error": user.errors.email }' }) do
@@ -16,53 +15,11 @@ describe 'NgForm::Builder' do
     end
   end
 
-  it 'creates text field with custom label' do
-    out = builder.string(:email, label: 'E-mail address')
-
-    expect(out).to have_tag(:div) do
-      with_tag :label, text: 'E-mail address'
-    end
-  end
-
-  it 'creates text field without label' do
-    out = builder.string(:email, label: false)
-
-    expect(out).to have_tag(:div) do
-      without_tag :label
-    end
-  end
-
-  it 'takes label text from locale' do
-    I18n.backend.store_translations :en, { 'ng_form' => { labels: { user: { email: 'Great e-mail' } } } }
-    out = builder.string(:email)
-
-    expect(out).to have_tag(:div) do
-      with_tag :label, text: 'Great e-mail'
-    end
-  end
-
   it 'creates text field with email type' do
     out = builder.email(:email)
 
     expect(out).to have_tag(:div) do
       with_tag :input, with: { type: 'email' }
-    end
-  end
-
-  it 'creates text field with placeholder' do
-    out = builder.string(:email, input_html: { placeholder: 'Enter e-mail' })
-
-    expect(out).to have_tag(:div) do
-      with_tag :input, with: { placeholder: 'Enter e-mail' }
-    end
-  end
-  
-  it 'takes placeholder text from locale' do
-    I18n.backend.store_translations :en, { 'ng_form' => { placeholders: { user: { email: 'Enter e-mail' } } } }
-    out = builder.string(:email)
-
-    expect(out).to have_tag(:div) do
-      with_tag :input, with: { placeholder: 'Enter e-mail' }
     end
   end
 
