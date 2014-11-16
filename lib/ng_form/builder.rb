@@ -11,16 +11,16 @@ module NgForm
       self.options = options
     end
 
-    def string(attribute, options = {})
-      build_text_field(attribute, 'text', options)
-    end
-
-    def email(attribute, options = {})
-      build_text_field(attribute, 'email', options)
-    end
-
-    def date(attribute, options = {})
-      build_text_field(attribute, 'date', options)
+    {
+      string: :text,
+      email: :email,
+      date: :date,
+      number: :number
+    }.each do |method_name, input_type|
+      define_method method_name do |attribute, options = {}|
+        options ||= {}
+        build_text_field attribute, input_type, options
+      end
     end
 
     def text(attribute, options = {})
@@ -113,7 +113,7 @@ module NgForm
 
     def build_text_field(attribute, type, options)
       input_html = build_input_html(attribute, options, 'form-control text', true)
-      input_html[:type] = type
+      input_html[:type] = options.try(:[], :input_html).try(:[], :type) || type
 
       build_wrapper attribute do
         build_label(attribute, options) +

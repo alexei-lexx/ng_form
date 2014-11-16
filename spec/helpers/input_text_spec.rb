@@ -30,4 +30,12 @@ describe 'NgForm::Builder' do
       without_tag :span, with: { class: %w(help-block has-error), 'ng-show' => 'user.errors.email' }
     end
   end
+
+  it 'uses input type from options arg' do
+    out = builder.string(:email, input_html: { type: 'number' })
+
+    expect(out).to have_tag(:div) do
+      with_tag :input, with: { type: 'number' }
+    end
+  end
 end
