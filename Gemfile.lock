@@ -1,8 +1,8 @@
 PATH
   remote: .
   specs:
-    ng_form (0.0.18)
-      rails (~> 4.1.1)
+    ng_form (0.0.19)
+      rails (~> 4.1)
 
 GEM
   remote: https://rubygems.org/
